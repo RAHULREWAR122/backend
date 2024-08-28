@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const serverless = require('serverless-http'); // Add this line
 const app = express();
 
 app.use(cors());
@@ -20,7 +21,7 @@ app.get('/api/documents/:id', (req, res) => {
 });
 
 app.post('/api/documents', (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   const newDocument = {
     id: documents.length + 1,
     ...req.body,
@@ -31,15 +32,14 @@ app.post('/api/documents', (req, res) => {
 });
 
 app.get('/api/document/search', (req, res) => {
-  console.log(req.query)
+  console.log(req.query);
   const query = req.query.q.toLowerCase();
   const results = documents.filter(doc => 
     doc.title.toLowerCase().includes(query) || doc.content.toLowerCase().includes(query)
   );
-  console.log(results)
+  console.log(results);
   res.json(results);
 });
 
-
-const PORT = 3001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+module.exports = app; // Export the Express app
+module.exports.handler = serverless(app); // Export the serverless function
